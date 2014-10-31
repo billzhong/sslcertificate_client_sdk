@@ -1,0 +1,82 @@
+API reference
+
+Signature:
+sort all get requested parameters(Only get method allowed, and nonce parameter required),
+
+
+function getSignature( $getParameters ){
+  $appid  = 'someuser';
+  $appkey = 'sdgdfgsadfhfghert43';
+  $order_keys = array_keys( $getParameters );
+  sort( $order_keys );
+  $ssl_parameter_string = "";
+  foreach( $order_keys as $k ){
+      $ssl_parameter_string .= join( ":", array( strtolower($k), $getParameters[ $k ] . "\n" ) );
+  }
+  $string2sign = sprintf(
+      "%s\n%s\n%s\n%s\n%s%s",
+      $VERB,
+      $CONTENT_MD5,
+      $CONTENT_TYPE,
+      $GMT_DATE,
+      $ssl_parameter_string,
+      $CanonicalizedResource
+  );
+
+  $sig = base64_encode( hash_hmac('sha1', $string2sign, self::$accessKeySecret, true ) );
+  return $sig;
+}
+
+
+Action:
+
+SUBMIT CSR:
+  Request example:
+    https://www.sslcertificate.cn/api/?version=2014-10-27&action=submitCSR&appid={APPID}&csr={URL_ENCODED_CSR}&domain={*.domain.com}&callback={https://portal.someportal.com/path/callback/}&code={code}&nonce={unique_random}&timestamp={2014-10-27T09:06:18Z}&signature={signature}
+
+  Result example:
+    {code:200,data:{msg:"success"},mandarin_msg:""}
+    {code:401,data:{msg:"csr does not match the domain"},mandarin_msg:""}
+    {code:401,data:{msg:"csr key length does not strong enough(only 1024/2048/4096 bit allowed)"},mandarin_msg:""}
+    {code:401,data:{msg:"domain length is not between 7, 24"},mandarin_msg:""}
+    {code:403,data:{msg:"signature does not match the real"},mandarin_msg:""}
+    {code:402,data:{msg:"nonce has been used"},mandarin_msg:""}
+    {code:403,data:{msg:"timestamp is bigger or less over 15 min than now"},mandarin_msg:""}
+    {code:404,data:{msg:"version does not support"},mandarin_msg:""}
+    {code:404,data:{msg:"code has been used"},mandarin_msg:""}
+    {code:500,data:{msg:"server internal error"},mandarin_msg:""}
+    {code:503,data:{msg:"server busy"},mandarin_msg:""}
+    {code:999,data:{msg:"unknow error"},mandarin_msg:""}
+
+CALLBACK DOMAIN VALIDATION:
+  Request example:
+    https://portal.someportal.com/path/callback/?version=2014-10-27&action=notifyDV&appid={APPID}&csr={URL_ENCODED_CSR}&domain={*.domain.com}&callback={https://portal.someportal.com/path/callback/}&code={code}&dv_status=success&dv_url={https://system.globalsign.com/qb/public/certificate/verifydomain.do?p=00a1fa842f839e92e4ac46d39e44a12d9322e3b6}&nonce={unique_random}&timestamp={2014-10-27T09:06:18Z}&signature={signature}
+
+    https://portal.someportal.com/path/callback/?version=2014-10-27&action=notifyDV&appid={APPID}&csr={URL_ENCODED_CSR}&domain={*.domain.com}&callback={https://portal.someportal.com/path/callback/}&code={code}&dv_status=rejected&nonce={unique_random}&timestamp={2014-10-27T09:06:18Z}&signature={signature}
+
+  Result example:
+    {code:200,data:{msg:"success"},mandarin_msg:""}
+    {code:204,data:{msg:"already notified"},mandarin_msg:""}
+    {code:403,data:{msg:"signature does not match the real"},mandarin_msg:""}
+    {code:402,data:{msg:"nonce has been used"},mandarin_msg:""}
+    {code:403,data:{msg:"timestamp is bigger or less over 15 min than now"},mandarin_msg:""}
+    {code:404,data:{msg:"version does not support"},mandarin_msg:""}
+    {code:500,data:{msg:"server internal error"},mandarin_msg:""}
+    {code:503,data:{msg:"server busy"},mandarin_msg:""}
+    {code:999,data:{msg:"unknow error"},mandarin_msg:""}
+
+CALLBACK CERT:
+  Request example:
+    https://portal.someportal.com/path/callback/?version=2014-10-27&action=notifyCERT&appid={APPID}&csr={URL_ENCODED_CSR}&domain={*.domain.com}&callback={https://portal.someportal.com/path/callback/}&code={code}&issued_cert={URL_ENCODED_CERT}&nonce={unique_random}&timestamp={2014-10-27T09:06:18Z}&signature={signature}
+
+  Result example:
+    {code:200,data:{msg:"success"},mandarin_msg:""}
+    {code:204,data:{msg:"already notified"},mandarin_msg:""}
+    {code:403,data:{msg:"signature does not match the real"},mandarin_msg:""}
+    {code:402,data:{msg:"nonce has been used"},mandarin_msg:""}
+    {code:403,data:{msg:"timestamp is bigger or less over 15 min than now"},mandarin_msg:""}
+    {code:404,data:{msg:"version does not support"},mandarin_msg:""}
+    {code:500,data:{msg:"server internal error"},mandarin_msg:""}
+    {code:503,data:{msg:"server busy"},mandarin_msg:""}
+    {code:999,data:{msg:"unknow error"},mandarin_msg:""}
+
