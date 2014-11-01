@@ -9,6 +9,9 @@ class SSLCertificate{
   var $appkey = 'appkey'; // 编辑成你的appkey
 
   var $gateway = "https://www.sslcertificate.cn/api/";
+  // for debug: https://sandbox.sslcertificate.cn/api/
+  // for debug code: https://sandbox.sslcertificate.cn/api/code/
+
   var $version = "2014-10-27";
   var $data = array();
 
