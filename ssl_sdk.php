@@ -12,7 +12,7 @@ class SSLCertificate{
   // for debug: https://sandbox.sslcertificate.cn/api/
   // for debug code: https://sandbox.sslcertificate.cn/api/code/
 
-  var $version = "2014-10-27";
+  var $version = "2014-11-11";
   var $data = array();
 
   /**
@@ -25,7 +25,7 @@ class SSLCertificate{
     sort( $parameter_names );
     $to_sign_array = array();
     foreach ($parameter_names as $v) {
-      $to_sign_array[] = strtolower($v) . '=' . $parameters[$v];
+      $to_sign_array[ strtolower($v) ] = $parameters[$v];
     }
     $to_sign = http_build_query( $to_sign_array );
     $signature = base64_encode( hash_hmac('sha1', $to_sign, $this->appkey, true ) );
@@ -51,6 +51,7 @@ class SSLCertificate{
   }
 
   public function code( $code ){
+    // code为空时，走预存款
     $this->data['code'] = $code;
     return $this;
   }
