@@ -21,7 +21,7 @@ WVnToJKY7ZdzapvSMeJxevxoeeIqmfR5chIkfvRIj/ZcHZoe+fpZvdgvEV3bJbsp
 5QQVXwnJVWXI6CxyJUHebB8pwyDGBi8=
 -----END CERTIFICATE REQUEST-----';
 $domain = '*.sslcertificate.cn';
-$order_id = 10000;
+$order_id = 10002;
 // $code = 'bbf1f512b9f57df14c1850629542eafd'; // Pre-Stored agent does not required to provide code
 
 $callback = 'https://www.yourdomainname.com/callback/callback_demo.php';
@@ -39,8 +39,8 @@ $res = $ssl->nonce( $order_id )
            ->submitCSR();
 
 if( $res ){
-  echo "\r\n<br/>\r\nOrder success\r\n<br/>\r\n";
+  echo "\r\n<br/>Order success\r\n<br/>";
   // next...
 }else{
-  echo "\r\n<br/>\r\nOrder fail\r\n<br/>\r\n";
+  echo "\r\n<br/>Order fail\r\n<br/>";
 }
