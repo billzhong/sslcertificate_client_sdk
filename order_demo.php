@@ -22,12 +22,17 @@ WVnToJKY7ZdzapvSMeJxevxoeeIqmfR5chIkfvRIj/ZcHZoe+fpZvdgvEV3bJbsp
 -----END CERTIFICATE REQUEST-----';
 $domain = '*.sslcertificate.cn';
 $order_id = 10000;
-$code = 'bbf1f512b9f57df14c1850629542eafd';
-$callback = 'https://www.yourdomainname.com/callback/callback_demo.php';
+// $code = 'bbf1f512b9f57df14c1850629542eafd'; // Pre-Stored agent does not required to provide code
 
-$ssl = new SSLCertificate();
-$res = $ssl->code( $code )
-           ->nonce( $order_id )
+$callback = 'https://www.yourdomainname.com/callback/callback_demo.php';
+// after the order proccessed, sslcertificate will notify a message to this url.
+
+$ssl = new SSLCertificate( 'dev', '234354365', 'sandbox' );
+// replace your appid and appkey here.
+// 'sandbox' is for debug.
+// '' or null or 'online' is for online enviroment.
+
+$res = $ssl->nonce( $order_id )
            ->domain( $domain )
            ->csr( $csr )
            ->callback( $callback )
@@ -35,6 +40,7 @@ $res = $ssl->code( $code )
 
 if( $res ){
   echo "\r\n<br/>\r\nOrder success\r\n<br/>\r\n";
+  // next...
 }else{
   echo "\r\n<br/>\r\nOrder fail\r\n<br/>\r\n";
 }

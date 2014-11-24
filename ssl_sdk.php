@@ -5,8 +5,8 @@
  * @Date:   2014/10/31 16:06:39
  */
 class SSLCertificate{
-  var $appid = 'appid';   // 编辑成你的appid
-  var $appkey = 'appkey'; // 编辑成你的appkey
+  var $appid = null;   // 编辑成你的appid
+  var $appkey = null; // 编辑成你的appkey
 
   var $gateway = "https://www.sslcertificate.cn/api/";
   // for debug: https://sandbox.sslcertificate.cn/api/
@@ -14,6 +14,18 @@ class SSLCertificate{
 
   var $version = "2014-11-11";
   var $data = array();
+
+  function __construct( $appid = null, $appkey = null, $sandbox_flag = null ){
+    if ( $appid !== null ) {
+      $this->appid = $appid;
+    }
+    if ( $appkey !== null ) {
+      $this->appkey = $appkey;
+    }
+    if ( $sandbox_flag === 'sandbox' ) {
+      $this->gateway = 'https://sandbox.sslcertificate.cn/api/';
+    }
+  }
 
   /**
    * generate signature
@@ -36,6 +48,7 @@ class SSLCertificate{
     $this->data['appid'] = $this->appid;
     $this->data['version'] = $this->version;
     $this->data['timestamp'] = gmdate('Y-m-d\TH:i:s\Z');
+    $this->data['code'] = isset( $this->data['code'] ) ? $this->data['code'] : '';
     $this->data['signature'] = $this->signature( $this->data );
     $url = $gateway . "?" . http_build_query( $this->data );
     $opts = array(
@@ -50,7 +63,7 @@ class SSLCertificate{
     return $result;
   }
 
-  public function code( $code ){
+  public function code( $code = '' ){
     // code为空时，走预存款
     $this->data['code'] = $code;
     return $this;
