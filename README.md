@@ -222,6 +222,64 @@ data.msg: 消息
 
 ---
 
+##4. 签名机制
+####1. RESTful API和签名
+
+SSLCertificate参考了支付宝、aws等安全支付、云计算业界前辈的API风格, 以异步化风格来为开发者提供了一套完整的SSL API方案. 开发者只需做好应用层的用户体验, 证书的申领操作将由我们的服务器完成.
+
+目前SSLCertificate签名机制如下：
+```
+1. 获取所有请求参数, 以Array形式, 索引为参数名, 值为参数值.
+2. 取出所有Array的索引(即所有参数的名称)至一新数组, 新数组无英文等特定索引(索引直接从0,1,2.....N排列).
+3. 将参数名数组排序(依次逐字符按ASCII升序排列).
+4. 初始化一个新的数组, 如to_sign_array.
+5. 按照参数名数组排序后的顺序, 依次从参数数组取值, 存进to_sign_array[ 转小写(参名) ]中.
+6. 使用标准组成GET参数的方法将to_sign_array组成字串to_sign.
+7. 使用HMAC_SHA1算法以APPKEY为加密密码, 对to_sign进行加密, 并用base64进行编码.
+8. 编码过后的字串就是本次请求所需要的签名.
+```
+
+---
+PHP示例签名代码如下:
+```PHP
+$parameter_names = array_keys( $parameters );
+sort( $parameter_names );
+$to_sign_array = array();
+foreach ($parameter_names as $v) {
+  $to_sign_array[ strtolower($v) ] = $parameters[$v];
+}
+$to_sign = http_build_query( $to_sign_array );
+$signature = base64_encode( hash_hmac('sha1', $to_sign, $this->appkey, true ) );
+return $signature
+```
+
+---
+Python签名示例代码如下
+```
+import urllib
+
+// parameters to sign
+parameter_names = parameters.keys()
+parameter_names.sort()
+to_sign_array = {}
+for v in parameter_names:
+    to_sign_array.insert(v.lower(), parameters[v])
+
+to_sign = urllib.urlencode(to_sign_array)
+signature = hmac.new(app_key, to_sign, sha)
+return base64.b64encode(signature.digest())
+```
+---
+
+####2. submit操作
+---
+  1. submitCSR
+    本方法是用于提交CSR至SSLCertificate的接口
+
+
+####3. receive操作
+
+NAN
 
 >>>>>#未完待续(Please wait...)
 
