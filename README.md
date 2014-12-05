@@ -256,18 +256,20 @@ return $signature
 ---
 Python签名示例代码如下
 ```
+import hmac
+import hashlib
+import base64
 import urllib
 
-// parameters to sign
+# parameters to sign
 parameter_names = parameters.keys()
 parameter_names.sort()
-to_sign_array = {}
-for v in parameter_names:
-    to_sign_array.insert(v.lower(), parameters[v])
-
+to_sign_array = []
+for i in parameter_names:
+    to_sign_array.append((i, parameters[i]))
 to_sign = urllib.urlencode(to_sign_array)
-signature = hmac.new(app_key, to_sign, sha)
-return base64.b64encode(signature.digest())
+signature = base64.b64encode(hmac.new(self.appkey, to_sign, hashlib.sha1).digest())
+return signature
 ```
 ---
 
