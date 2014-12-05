@@ -255,7 +255,7 @@ return $signature
 
 ---
 Python签名示例代码如下
-```
+```Python
 import hmac
 import hashlib
 import base64
@@ -268,8 +268,8 @@ to_sign_array = []
 for i in parameter_names:
     to_sign_array.append((i, parameters[i]))
 to_sign = urllib.urlencode(to_sign_array)
-signature = base64.b64encode(hmac.new(self.appkey, to_sign, hashlib.sha1).digest())
-return signature
+signature = base64.b64encode(hmac.new(appkey, to_sign, hashlib.sha1).digest())
+print signature
 ```
 ---
 
